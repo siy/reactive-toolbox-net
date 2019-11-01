@@ -1,5 +1,7 @@
 module org.reactivetoolbox.net {
-    exports org.reactivetoolbox.net.http;
+    requires io.netty.all;
+    requires org.reactivetoolbox.core;
+    exports org.reactivetoolbox.net.http.server;
 //    exports org.reactivetoolbox.core.lang;
 //    exports org.reactivetoolbox.core.lang.support;
 //    exports org.reactivetoolbox.core.meta;

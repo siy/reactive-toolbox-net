@@ -37,9 +37,16 @@
         <junit.version>5.4.0</junit.version>
         <junit.platform.version>1.4.0</junit.platform.version>
         <netty.version>4.1.42.Final</netty.version>
+        <toolbox.version>0.3.1-SNAPSHOT</toolbox.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.reactive-toolbox</groupId>
+            <artifactId>reactive-toolbox-core</artifactId>
+            <version>${toolbox.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
