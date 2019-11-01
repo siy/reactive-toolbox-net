@@ -14,8 +14,8 @@ import org.reactivetoolbox.core.lang.Functions.FN0;
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.lang.ThrowingFunctions;
-import org.reactivetoolbox.net.http.server.router.HttpRouter;
 import org.reactivetoolbox.net.http.server.ServerErrors;
+import org.reactivetoolbox.net.http.server.router.HttpRouter;
 
 import static org.reactivetoolbox.core.lang.ThrowingFunctions.lift;
 
@@ -24,10 +24,11 @@ import static org.reactivetoolbox.core.lang.ThrowingFunctions.lift;
  */
 class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
     private static final FN0<Result<SelfSignedCertificate>> SSC_FACTORY = ThrowingFunctions.<SelfSignedCertificate>lift(SelfSignedCertificate::new);
-    private static final FN1<Result<SslContext>, SelfSignedCertificate> CONTEXT_BUILDER = lift(certificate -> SslContextBuilder.forServer(certificate.certificate(),
-                                                                                                                                          certificate.privateKey())
-                                                                                                                               .sslProvider(SslProvider.JDK)
-                                                                                                                               .build());
+    private static final FN1<Result<SslContext>, SelfSignedCertificate> CONTEXT_BUILDER =
+            lift(certificate -> SslContextBuilder.forServer(certificate.certificate(),
+                                                            certificate.privateKey())
+                                                 .sslProvider(SslProvider.JDK)
+                                                 .build());
     private final HttpRouter router;
     private final ServerConfig config;
 
@@ -49,11 +50,10 @@ class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
      *         The Channel which was registered.
      */
     @Override
-    public void initChannel(SocketChannel channel) throws Exception {
-        final Result<SslContext> sslCtx = createSelfSignedContext();
-
-        sslCtx.onSuccess(sslContext -> channel.pipeline()
-                                              .addLast(sslContext.newHandler(channel.alloc())));
+    public void initChannel(SocketChannel channel) {
+        createSelfSignedContext()
+                .onSuccess(sslContext -> channel.pipeline()
+                                                .addLast(sslContext.newHandler(channel.alloc())));
 
         channel.pipeline()
                .addLast(new HttpRequestDecoder())

@@ -4,10 +4,10 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpUtil;
 import org.reactivetoolbox.net.http.server.RequestContext;
 
-public class NettyRequestContext implements RequestContext {
+class NettyRequestContext implements RequestContext {
     private final FullHttpRequest request;
 
-    public NettyRequestContext(final FullHttpRequest request) {
+    NettyRequestContext(final FullHttpRequest request) {
         this.request = request;
     }
 

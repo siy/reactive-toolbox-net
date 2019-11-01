@@ -15,22 +15,32 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.reactivetoolbox.core.async.Promise;
 import org.reactivetoolbox.core.lang.Failure;
 import org.reactivetoolbox.core.lang.Result;
+import org.reactivetoolbox.core.lang.Tuple.Tuple3;
 import org.reactivetoolbox.core.lang.support.WebFailureTypes;
-import org.reactivetoolbox.net.http.server.router.HttpRouter;
 import org.reactivetoolbox.net.http.server.Server;
+import org.reactivetoolbox.net.http.server.router.HttpRouter;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.reactivetoolbox.core.async.Promise.all;
+import static org.reactivetoolbox.core.async.Promise.fulfilled;
+import static org.reactivetoolbox.core.async.Promise.promise;
+import static org.reactivetoolbox.core.lang.Tuple.tuple;
 
 /**
- * The WebServer class is a convenience wrapper around the Netty HTTP server.
+ * The WebServer class is a convenience wrapper for the Netty HTTP server.
  */
 public class NettyServer implements Server {
-
     private final HttpRouter router;
     private final ServerConfig config;
+    private final AtomicBoolean started = new AtomicBoolean(false);
+    private final AtomicReference<EventLoopGroup> parentGroupHolder = new AtomicReference<>();
+    private final AtomicReference<EventLoopGroup> loopGroupHolder = new AtomicReference<>();
 
     /**
      * Creates a new WebServer.
      *
-     * @param port
      * @param config
      * @param router
      */
@@ -41,29 +51,50 @@ public class NettyServer implements Server {
 
     /**
      * Starts the web server.
+     *
+     * @return {@link Promise} instance which will be resolved once server is started.
      */
     @Override
     public Promise<Server> start() {
+        return started.compareAndSet(false, true)
+               ? chooseTransport().map(this::start)
+               : fulfilled(this);
+    }
+
+    private Tuple3<EventLoopGroup, EventLoopGroup, Class<? extends ServerChannel>> chooseTransport() {
         if (Epoll.isAvailable()) {
-            return start(new EpollEventLoopGroup(1), new EpollEventLoopGroup(), EpollServerSocketChannel.class);
-        } else if (KQueue.isAvailable()) {
-            return start(new KQueueEventLoopGroup(1), new EpollEventLoopGroup(), KQueueServerSocketChannel.class);
-        } else {
-            return start(new NioEventLoopGroup(1), new EpollEventLoopGroup(), NioServerSocketChannel.class);
+            return tuple(new EpollEventLoopGroup(1), new EpollEventLoopGroup(), EpollServerSocketChannel.class);
         }
+
+        if (KQueue.isAvailable()) {
+            return tuple(new KQueueEventLoopGroup(1), new EpollEventLoopGroup(), KQueueServerSocketChannel.class);
+        }
+
+        return tuple(new NioEventLoopGroup(1), new EpollEventLoopGroup(), NioServerSocketChannel.class);
     }
 
     /**
-     * Initializes the server, socket, and channel.
+     * Stops the web server.
      *
-     * @param loopGroup
-     *         The event loop group.
-     * @param serverChannelClass
-     *         The socket channel class.
+     * @return {@link Promise} instance which will be resolved once server is stopped.
      */
+    @Override
+    public Promise<Server> stop() {
+        if (started.get()) {
+            return all(promise(parent -> parentGroupHolder.get().shutdownGracefully().addListener(v -> parent.ok(this))),
+                       promise(loop -> loopGroupHolder.get().shutdownGracefully().addListener(v -> loop.ok(this))))
+                    .map(result -> result.map((v1, v2) -> this));
+        } else {
+            return fulfilled(this);
+        }
+    }
+
     private Promise<Server> start(final EventLoopGroup parentGroup,
                                   final EventLoopGroup loopGroup,
                                   final Class<? extends ServerChannel> serverChannelClass) {
+
+        parentGroupHolder.set(parentGroup);
+        loopGroupHolder.set(loopGroup);
 
         try {
             final ChannelFuture bindFuture = new ServerBootstrap()
@@ -72,10 +103,10 @@ public class NettyServer implements Server {
                     .childHandler(new NettyServerInitializer(router, config))
                     .bind(config.port());
 
-            return Promise.promise(promise -> bindFuture.addListener(v -> promise.resolve(Result.success(this))));
+            return promise(promise -> bindFuture.addListener(v -> promise.resolve(Result.success(this))));
 
         } catch (final Exception e) {
-            return Promise.fulfilled(Failure.with(WebFailureTypes.INTERNAL_SERVER_ERROR, "Server interrupted").asFailure());
+            return fulfilled(Failure.with(WebFailureTypes.INTERNAL_SERVER_ERROR, "Server interrupted").asFailure());
         }
     }
 
