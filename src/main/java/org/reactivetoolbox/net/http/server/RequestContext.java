@@ -1,4 +1,5 @@
 package org.reactivetoolbox.net.http.server;
 
-public interface RequestContext {
+public interface RequestContext<T> {
+    NativeBuffer<T> allocate();
 }
