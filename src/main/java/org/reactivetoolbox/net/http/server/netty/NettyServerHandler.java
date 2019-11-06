@@ -51,12 +51,12 @@ class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         //TODO: configurable error response format
         final var context = new NettyRequestContext(ctx, request, config);
 
-        router.locateHandler(context)
+        router.locate(context)
               .onSuccess(route -> route.handler()
                                        .apply(context)
-                                       .onSuccess(value -> context.writeResponse(OK,
-                                                                                 route.outputContentType(),
-                                                                                 value.asNative()))
+                                       .onSuccess(buffer -> context.writeResponse(OK,
+                                                                                  route.outputType(),
+                                                                                  ((NettyNativeBuffer) buffer).unwrap()))
                                        .onFailure(failure -> context.writeResponse(toStatus(failure),
                                                                                    TEXT_PLAIN,
                                                                                    serializeString(failure.message()))))

@@ -1,28 +1,33 @@
 package org.reactivetoolbox.net.http.server.netty;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.reactivetoolbox.net.http.server.NativeBuffer;
 
-import java.nio.charset.StandardCharsets;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static java.nio.charset.StandardCharsets.*;
-
-public class NettyNativeBuffer implements NativeBuffer<ByteBuf> {
+public class NettyNativeBuffer implements NativeBuffer {
     private final ByteBuf buffer;
 
-    public NettyNativeBuffer(final ByteBuf buffer) {
+    private NettyNativeBuffer(final ByteBuf buffer) {
         this.buffer = buffer;
     }
 
-    @Override
-    public ByteBuf asNative() {
+    public static NettyNativeBuffer buffer(final ByteBuf buffer) {
+        return new NettyNativeBuffer(buffer);
+    }
+
+    public ByteBuf unwrap() {
         return buffer;
     }
 
     @Override
-    public NativeBuffer<ByteBuf> write(final String value) {
+    public NettyNativeBuffer write(final String value) {
         buffer.writeBytes(value.getBytes(UTF_8));
         return this;
+    }
+
+    @Override
+    public void release() {
+        buffer.release();
     }
 }

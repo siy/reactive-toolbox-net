@@ -6,8 +6,10 @@ import org.reactivetoolbox.net.http.ContentType;
 import org.reactivetoolbox.net.http.server.NativeBuffer;
 import org.reactivetoolbox.net.http.server.RequestContext;
 
-public interface Route<T> {
-    FN1<Promise<NativeBuffer<T>>, RequestContext<T>> handler();
+//TODO: add documentation to route
+public interface Route {
+    FN1<Promise<NativeBuffer>, RequestContext> handler();
 
-    ContentType outputContentType();
+    ContentType inputType();
+    ContentType outputType();
 }

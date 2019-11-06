@@ -24,8 +24,9 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static java.time.ZoneOffset.UTC;
 import static java.time.ZonedDateTime.now;
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
+import static org.reactivetoolbox.net.http.server.netty.NettyNativeBuffer.buffer;
 
-class NettyRequestContext implements RequestContext<ByteBuf> {
+class NettyRequestContext implements RequestContext {
     private static final String SERVER_NAME = "Reactive Toolbox HTTP Server (Netty)";
 
     private final ChannelHandlerContext context;
@@ -47,7 +48,9 @@ class NettyRequestContext implements RequestContext<ByteBuf> {
         final var response = buildResponse(status, contentType, content);
 
         context.writeAndFlush(response)
-               .addListener(keepAlive ? (ch) -> {} : ChannelFutureListener.CLOSE);
+               .addListener(keepAlive
+                            ? (ch) -> {}
+                            : ChannelFutureListener.CLOSE);
     }
 
     private FullHttpResponse buildResponse(final HttpResponseStatus status,
@@ -76,7 +79,8 @@ class NettyRequestContext implements RequestContext<ByteBuf> {
     }
 
     @Override
-    public NativeBuffer<ByteBuf> allocate() {
-        return new NettyNativeBuffer(context.alloc().buffer(config.initialBufferSize(), config.maxBufferSize()));
+    public NativeBuffer allocate() {
+        return buffer(context.alloc().buffer(config.initialBufferSize(),
+                                             config.maxBufferSize()));
     }
 }

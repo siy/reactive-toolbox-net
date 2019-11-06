@@ -1,6 +1,7 @@
 package org.reactivetoolbox.net.http.server.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
@@ -24,14 +25,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.reactivetoolbox.core.async.Promise.all;
-import static org.reactivetoolbox.core.async.Promise.fulfilled;
 import static org.reactivetoolbox.core.async.Promise.promise;
+import static org.reactivetoolbox.core.async.Promise.readyFail;
+import static org.reactivetoolbox.core.async.Promise.readyOk;
 import static org.reactivetoolbox.core.lang.Tuple.tuple;
 
 /**
  * The WebServer class is a convenience wrapper for the Netty HTTP server.
  */
-public class NettyServer implements Server {
+public class NettyServer implements Server<ByteBuf> {
     private final HttpRouter router;
     private final ServerConfig config;
     private final AtomicBoolean started = new AtomicBoolean(false);
@@ -55,12 +57,13 @@ public class NettyServer implements Server {
      * @return {@link Promise} instance which will be resolved once server is started.
      */
     @Override
-    public Promise<Server> start() {
+    public Promise<Server<ByteBuf>> start() {
         return started.compareAndSet(false, true)
                ? chooseTransport().map(this::start)
-               : fulfilled(this);
+               : readyOk(this);
     }
 
+    //TODO: use internal scheduler
     private Tuple3<EventLoopGroup, EventLoopGroup, Class<? extends ServerChannel>> chooseTransport() {
         if (Epoll.isAvailable()) {
             return tuple(new EpollEventLoopGroup(1), new EpollEventLoopGroup(), EpollServerSocketChannel.class);
@@ -79,17 +82,17 @@ public class NettyServer implements Server {
      * @return {@link Promise} instance which will be resolved once server is stopped.
      */
     @Override
-    public Promise<Server> stop() {
+    public Promise<Server<ByteBuf>> stop() {
         if (started.get()) {
             return all(promise(parent -> parentGroupHolder.get().shutdownGracefully().addListener(v -> parent.ok(this))),
                        promise(loop -> loopGroupHolder.get().shutdownGracefully().addListener(v -> loop.ok(this))))
                     .map(result -> result.map((v1, v2) -> this));
         } else {
-            return fulfilled(this);
+            return readyOk(this);
         }
     }
 
-    private Promise<Server> start(final EventLoopGroup parentGroup,
+    private Promise<Server<ByteBuf>> start(final EventLoopGroup parentGroup,
                                   final EventLoopGroup loopGroup,
                                   final Class<? extends ServerChannel> serverChannelClass) {
 
@@ -106,9 +109,7 @@ public class NettyServer implements Server {
             return promise(promise -> bindFuture.addListener(v -> promise.resolve(Result.success(this))));
 
         } catch (final Exception e) {
-            return fulfilled(Failure.with(WebFailureTypes.INTERNAL_SERVER_ERROR, "Server interrupted").asFailure());
+            return readyFail(Failure.with(WebFailureTypes.INTERNAL_SERVER_ERROR, "Server interrupted"));
         }
     }
-
-
 }
