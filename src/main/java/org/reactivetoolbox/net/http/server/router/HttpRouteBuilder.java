@@ -12,7 +12,6 @@ import org.reactivetoolbox.core.lang.Functions.FN7;
 import org.reactivetoolbox.core.lang.Functions.FN8;
 import org.reactivetoolbox.core.lang.Functions.FN9;
 import org.reactivetoolbox.core.lang.Result;
-import org.reactivetoolbox.core.lang.Tuple;
 import org.reactivetoolbox.core.lang.Tuple.Tuple1;
 import org.reactivetoolbox.core.lang.Tuple.Tuple2;
 import org.reactivetoolbox.core.lang.Tuple.Tuple3;
@@ -40,8 +39,11 @@ import static org.reactivetoolbox.net.http.Method.PUT;
 import static org.reactivetoolbox.net.http.Method.TRACE;
 
 public final class HttpRouteBuilder {
-    //TODO: implement grouping under common sub-path
-    //static List<Route> at(String path), Route)
+    private HttpRouteBuilder() {
+    }
+//    static List<Route> with(final String path, final MutableRoute... routes) {
+//
+//    }
 
     static Stage1 options() {
         return new Builder(OPTIONS);
@@ -115,235 +117,12 @@ public final class HttpRouteBuilder {
         return new Builder(CONNECT, path);
     }
 
-    interface MutableRoute extends Route {
-    }
+    public interface Stage1 {
+        Stage1 accepts(final ContentType input);
 
-    private static class Builder implements Stage1 {
-        private final Method method;
-        private final String path;
-        private ContentType input = ContentType.JSON;
-        private ContentType output = ContentType.JSON;
+        Stage1 returns(final ContentType output);
 
-        private Builder(final Method method) {
-            this(method, "");
-        }
-
-        private Builder(final Method method, final String path) {
-            this.method = method;
-            this.path = path;
-        }
-
-        @Override
-        public Stage1 input(final ContentType input) {
-            this.input = input;
-            return this;
-        }
-
-        @Override
-        public Stage1 output(final ContentType output) {
-            this.output = output;
-            return this;
-        }
-
-        @Override
-        public Stage2_0 withoutParameters() {
-            return new Stage2_0() {
-                @Override
-                public Result<Tuple0> extract(final RequestContext context) {
-                    return success(tuple());
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1> Stage2_1<T1> with(final Parameter<T1> p1) {
-            return new Stage2_1<T1>() {
-                @Override
-                public Result<Tuple1<T1>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2> Stage2_2<T1, T2> with(final Parameter<T1> p1, final Parameter<T2> p2) {
-            return new Stage2_2<T1, T2>() {
-                @Override
-                public Result<Tuple2<T1, T2>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2, T3> Stage2_3<T1, T2, T3> with(final Parameter<T1> p1, final Parameter<T2> p2, final Parameter<T3> p3) {
-            return new Stage2_3<T1, T2, T3>() {
-                @Override
-                public Result<Tuple3<T1, T2, T3>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context), p3.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2, T3, T4> Stage2_4<T1, T2, T3, T4> with(final Parameter<T1> p1,
-                                                              final Parameter<T2> p2,
-                                                              final Parameter<T3> p3,
-                                                              final Parameter<T4> p4) {
-            return new Stage2_4<T1, T2, T3, T4>() {
-                @Override
-                public Result<Tuple4<T1, T2, T3, T4>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2, T3, T4, T5> Stage2_5<T1, T2, T3, T4, T5> with(final Parameter<T1> p1,
-                                                                      final Parameter<T2> p2,
-                                                                      final Parameter<T3> p3,
-                                                                      final Parameter<T4> p4,
-                                                                      final Parameter<T5> p5) {
-            return new Stage2_5<T1, T2, T3, T4, T5>() {
-                @Override
-                public Result<Tuple5<T1, T2, T3, T4, T5>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context), p3.apply(context),
-                                 p4.apply(context), p5.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2, T3, T4, T5, T6> Stage2_6<T1, T2, T3, T4, T5, T6> with(final Parameter<T1> p1,
-                                                                              final Parameter<T2> p2,
-                                                                              final Parameter<T3> p3,
-                                                                              final Parameter<T4> p4,
-                                                                              final Parameter<T5> p5,
-                                                                              final Parameter<T6> p6) {
-            return new Stage2_6<T1, T2, T3, T4, T5, T6>() {
-                @Override
-                public Result<Tuple6<T1, T2, T3, T4, T5, T6>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context), p3.apply(context),
-                                 p4.apply(context), p5.apply(context), p6.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2, T3, T4, T5, T6, T7> Stage2_7<T1, T2, T3, T4, T5, T6, T7> with(final Parameter<T1> p1,
-                                                                                      final Parameter<T2> p2,
-                                                                                      final Parameter<T3> p3,
-                                                                                      final Parameter<T4> p4,
-                                                                                      final Parameter<T5> p5,
-                                                                                      final Parameter<T6> p6,
-                                                                                      final Parameter<T7> p7) {
-            return new Stage2_7<T1, T2, T3, T4, T5, T6, T7>() {
-                @Override
-                public Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context),
-                                 p5.apply(context), p6.apply(context), p7.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2, T3, T4, T5, T6, T7, T8> Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> with(final Parameter<T1> p1,
-                                                                                              final Parameter<T2> p2,
-                                                                                              final Parameter<T3> p3,
-                                                                                              final Parameter<T4> p4,
-                                                                                              final Parameter<T5> p5,
-                                                                                              final Parameter<T6> p6,
-                                                                                              final Parameter<T7> p7,
-                                                                                              final Parameter<T8> p8) {
-            return new Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8>() {
-                @Override
-                public Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context),
-                                 p5.apply(context), p6.apply(context), p7.apply(context), p8.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        @Override
-        public <T1, T2, T3, T4, T5, T6, T7, T8, T9> Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> with(final Parameter<T1> p1,
-                                                                                                      final Parameter<T2> p2,
-                                                                                                      final Parameter<T3> p3,
-                                                                                                      final Parameter<T4> p4,
-                                                                                                      final Parameter<T5> p5,
-                                                                                                      final Parameter<T6> p6,
-                                                                                                      final Parameter<T7> p7,
-                                                                                                      final Parameter<T8> p8,
-                                                                                                      final Parameter<T9> p9) {
-            return new Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9>() {
-                @Override
-                public Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> extract(final RequestContext context) {
-                    return tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context), p5.apply(context),
-                                 p6.apply(context), p7.apply(context), p8.apply(context), p9.apply(context)).map(Result::zip);
-                }
-
-                @Override
-                public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-                    return Builder.this.buildRoute(handler);
-                }
-            };
-        }
-
-        public <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler) {
-            return null;
-        }
-    }
-
-    private interface Stage1 {
-        Stage1 input(final ContentType input);
-
-        Stage1 output(final ContentType output);
-
-        Stage2_0 withoutParameters();
+        Stage2_0 without();
 
         <T1> Stage2_1<T1> with(final Parameter<T1> p1);
 
@@ -376,149 +155,365 @@ public final class HttpRouteBuilder {
                                                                                                final Parameter<T9> p9);
     }
 
-    private interface Stage2<T extends Tuple> {
-        Result<T> extract(final RequestContext context);
-
-        <R> MutableRoute buildRoute(final FN1<Promise<R>, RequestContext> handler);
+    public interface Stage2_0 {
+        <R> Route then(FN0<Promise<R>> fn);
     }
 
-    private interface Stage2_0 extends Stage2<Tuple0> {
-        default <R> MutableRoute apply(FN0<Result<R>> fn) {
-            final FN1<Result<Tuple0>, RequestContext> vv = this::extract;
+    public interface Stage2_1<T1> {
+        Stage2_1<T1> validate(final CrossParameterValidator<Tuple1<T1>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN0<Promise<R>> fn) {
-            final FN1<Result<Tuple0>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(final FN1<Promise<R>, T1> fn);
     }
 
-    private interface Stage2_1<T1> extends Stage2<Tuple1<T1>> {
-        default <R> MutableRoute apply(final FN1<Result<R>, T1> fn) {
-            final FN1<Result<Tuple1<T1>>, RequestContext> vv = this::extract;
+    public interface Stage2_2<T1, T2> {
+        Stage2_2<T1, T2> validate(final CrossParameterValidator<Tuple2<T1, T2>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(final FN1<Promise<R>, T1> fn) {
-            final FN1<Result<Tuple1<T1>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN2<Promise<R>, T1, T2> fn);
     }
 
-    private interface Stage2_2<T1, T2> extends Stage2<Tuple2<T1, T2>> {
-        default <R> MutableRoute apply(FN2<Result<R>, T1, T2> fn) {
-            final FN1<Result<Tuple2<T1, T2>>, RequestContext> vv = this::extract;
+    public interface Stage2_3<T1, T2, T3> {
+        Stage2_3<T1, T2, T3> validate(final CrossParameterValidator<Tuple3<T1, T2, T3>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN2<Promise<R>, T1, T2> fn) {
-            final FN1<Result<Tuple2<T1, T2>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN3<Promise<R>, T1, T2, T3> fn);
     }
 
-    private interface Stage2_3<T1, T2, T3> extends Stage2<Tuple3<T1, T2, T3>> {
-        default <R> MutableRoute apply(FN3<Result<R>, T1, T2, T3> fn) {
-            final FN1<Result<Tuple3<T1, T2, T3>>, RequestContext> vv = this::extract;
+    public interface Stage2_4<T1, T2, T3, T4> {
+        Stage2_4<T1, T2, T3, T4> validate(final CrossParameterValidator<Tuple4<T1, T2, T3, T4>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN3<Promise<R>, T1, T2, T3> fn) {
-            final FN1<Result<Tuple3<T1, T2, T3>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN4<Promise<R>, T1, T2, T3, T4> fn);
     }
 
-    private interface Stage2_4<T1, T2, T3, T4> extends Stage2<Tuple4<T1, T2, T3, T4>> {
-        default <R> MutableRoute apply(FN4<Result<R>, T1, T2, T3, T4> fn) {
-            final FN1<Result<Tuple4<T1, T2, T3, T4>>, RequestContext> vv = this::extract;
+    public interface Stage2_5<T1, T2, T3, T4, T5> {
+        Stage2_5<T1, T2, T3, T4, T5> validate(final CrossParameterValidator<Tuple5<T1, T2, T3, T4, T5>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN4<Promise<R>, T1, T2, T3, T4> fn) {
-            final FN1<Result<Tuple4<T1, T2, T3, T4>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN5<Promise<R>, T1, T2, T3, T4, T5> fn);
     }
 
-    private interface Stage2_5<T1, T2, T3, T4, T5> extends Stage2<Tuple5<T1, T2, T3, T4, T5>> {
-        default <R> MutableRoute apply(FN5<Result<R>, T1, T2, T3, T4, T5> fn) {
-            final FN1<Result<Tuple5<T1, T2, T3, T4, T5>>, RequestContext> vv = this::extract;
+    public interface Stage2_6<T1, T2, T3, T4, T5, T6> {
+        Stage2_6<T1, T2, T3, T4, T5, T6> validate(final CrossParameterValidator<Tuple6<T1, T2, T3, T4, T5, T6>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN5<Promise<R>, T1, T2, T3, T4, T5> fn) {
-            final FN1<Result<Tuple5<T1, T2, T3, T4, T5>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN6<Promise<R>, T1, T2, T3, T4, T5, T6> fn);
     }
 
-    private interface Stage2_6<T1, T2, T3, T4, T5, T6> extends Stage2<Tuple6<T1, T2, T3, T4, T5, T6>> {
-        default <R> MutableRoute apply(FN6<Result<R>, T1, T2, T3, T4, T5, T6> fn) {
-            final FN1<Result<Tuple6<T1, T2, T3, T4, T5, T6>>, RequestContext> vv = this::extract;
+    public interface Stage2_7<T1, T2, T3, T4, T5, T6, T7> {
+        Stage2_7<T1, T2, T3, T4, T5, T6, T7> validate(final CrossParameterValidator<Tuple7<T1, T2, T3, T4, T5, T6, T7>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN6<Promise<R>, T1, T2, T3, T4, T5, T6> fn) {
-            final FN1<Result<Tuple6<T1, T2, T3, T4, T5, T6>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN7<Promise<R>, T1, T2, T3, T4, T5, T6, T7> fn);
     }
 
-    private interface Stage2_7<T1, T2, T3, T4, T5, T6, T7> extends Stage2<Tuple7<T1, T2, T3, T4, T5, T6, T7>> {
-        default <R> MutableRoute apply(FN7<Result<R>, T1, T2, T3, T4, T5, T6, T7> fn) {
-            final FN1<Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>>, RequestContext> vv = this::extract;
+    public interface Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> {
+        Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> validate(final CrossParameterValidator<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN7<Promise<R>, T1, T2, T3, T4, T5, T6, T7> fn) {
-            final FN1<Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN8<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8> fn);
     }
 
-    private interface Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> extends Stage2<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> {
-        default <R> MutableRoute apply(FN8<Result<R>, T1, T2, T3, T4, T5, T6, T7, T8> fn) {
-            final FN1<Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>, RequestContext> vv = this::extract;
+    public interface Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
+        Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> validate(final CrossParameterValidator<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> validator);
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
-        }
-
-        default <R> MutableRoute then(FN8<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8> fn) {
-            final FN1<Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>, RequestContext> vv = this::extract;
-
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
-        }
+        <R> Route then(FN9<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8, T9> fn);
     }
 
-    private interface Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Stage2<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> {
-        default <R> MutableRoute apply(FN9<Result<R>, T1, T2, T3, T4, T5, T6, T7, T8, T9> fn) {
-            final FN1<Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>, RequestContext> vv = this::extract;
+    private static class Builder implements Stage1, Prefixed<Route> {
+        private final Method method;
+        private String path;
+        private ContentType input = ContentType.JSON;
+        private ContentType output = ContentType.JSON;
+        private FN1<Promise<?>, RequestContext> handler;
 
-            return buildRoute(vv.then(tuple -> tuple.flatMap(fn.bindTuple())).then(Promise::ready));
+        private Builder(final Method method) {
+            this(method, "");
         }
 
-        default <R> MutableRoute then(FN9<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8, T9> fn) {
-            final FN1<Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>, RequestContext> vv = this::extract;
+        private Builder(final Method method, final String path) {
+            this.method = method;
+            this.path = path;
+        }
 
-            return buildRoute(vv.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
+        @Override
+        public Stage1 accepts(final ContentType input) {
+            this.input = input;
+            return this;
+        }
+
+        @Override
+        public Stage1 returns(final ContentType output) {
+            this.output = output;
+            return this;
+        }
+
+        @Override
+        public Route prefix(final String prefix) {
+            return null;
+        }
+
+        private Route setHandler(final FN1<Promise<?>, RequestContext> handler) {
+            this.handler = handler;
+            return null;
+        }
+
+        @Override
+        public Stage2_0 without() {
+            return new Stage2_0() {
+                @Override
+                public <R> Route then(FN0<Promise<R>> fn) {
+                    final FN1<Result<Tuple0>, RequestContext> extractor = context -> success(tuple());
+                    return setHandler(extractor.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1> Stage2_1<T1> with(final Parameter<T1> p1) {
+            return new Stage2_1<T1>() {
+                private CrossParameterValidator<Tuple1<T1>> validator = Result::success;
+
+                @Override
+                public Stage2_1<T1> validate(final CrossParameterValidator<Tuple1<T1>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(final FN1<Promise<R>, T1> fn) {
+                    final FN1<Result<Tuple1<T1>>, RequestContext> extractor = context -> tuple(p1.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1, T2> Stage2_2<T1, T2> with(final Parameter<T1> p1, final Parameter<T2> p2) {
+            return new Stage2_2<T1, T2>() {
+                private CrossParameterValidator<Tuple2<T1, T2>> validator = Result::success;
+
+                @Override
+                public Stage2_2<T1, T2> validate(final CrossParameterValidator<Tuple2<T1, T2>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN2<Promise<R>, T1, T2> fn) {
+                    final FN1<Result<Tuple2<T1, T2>>, RequestContext> extractor = context -> tuple(p1.apply(context),
+                                                                                                   p2.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1, T2, T3> Stage2_3<T1, T2, T3> with(final Parameter<T1> p1, final Parameter<T2> p2, final Parameter<T3> p3) {
+            return new Stage2_3<T1, T2, T3>() {
+                private CrossParameterValidator<Tuple3<T1, T2, T3>> validator = Result::success;
+
+                @Override
+                public Stage2_3<T1, T2, T3> validate(final CrossParameterValidator<Tuple3<T1, T2, T3>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN3<Promise<R>, T1, T2, T3> fn) {
+                    final FN1<Result<Tuple3<T1, T2, T3>>, RequestContext> extractor = context -> tuple(p1.apply(context),
+                                                                                                       p2.apply(context),
+                                                                                                       p3.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1, T2, T3, T4> Stage2_4<T1, T2, T3, T4> with(final Parameter<T1> p1,
+                                                              final Parameter<T2> p2,
+                                                              final Parameter<T3> p3,
+                                                              final Parameter<T4> p4) {
+            return new Stage2_4<T1, T2, T3, T4>() {
+                private CrossParameterValidator<Tuple4<T1, T2, T3, T4>> validator = Result::success;
+
+                @Override
+                public Stage2_4<T1, T2, T3, T4> validate(final CrossParameterValidator<Tuple4<T1, T2, T3, T4>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN4<Promise<R>, T1, T2, T3, T4> fn) {
+                    final FN1<Result<Tuple4<T1, T2, T3, T4>>, RequestContext> extractor = context -> tuple(p1.apply(context),
+                                                                                                           p2.apply(context),
+                                                                                                           p3.apply(context),
+                                                                                                           p4.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1, T2, T3, T4, T5> Stage2_5<T1, T2, T3, T4, T5> with(final Parameter<T1> p1,
+                                                                      final Parameter<T2> p2,
+                                                                      final Parameter<T3> p3,
+                                                                      final Parameter<T4> p4,
+                                                                      final Parameter<T5> p5) {
+            return new Stage2_5<T1, T2, T3, T4, T5>() {
+                private CrossParameterValidator<Tuple5<T1, T2, T3, T4, T5>> validator = Result::success;
+
+                @Override
+                public Stage2_5<T1, T2, T3, T4, T5> validate(final CrossParameterValidator<Tuple5<T1, T2, T3, T4, T5>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN5<Promise<R>, T1, T2, T3, T4, T5> fn) {
+                    final FN1<Result<Tuple5<T1, T2, T3, T4, T5>>, RequestContext> extractor = context -> tuple(p1.apply(context),
+                                                                                                               p2.apply(context),
+                                                                                                               p3.apply(context),
+                                                                                                               p4.apply(context),
+                                                                                                               p5.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1, T2, T3, T4, T5, T6> Stage2_6<T1, T2, T3, T4, T5, T6> with(final Parameter<T1> p1,
+                                                                              final Parameter<T2> p2,
+                                                                              final Parameter<T3> p3,
+                                                                              final Parameter<T4> p4,
+                                                                              final Parameter<T5> p5,
+                                                                              final Parameter<T6> p6) {
+            return new Stage2_6<T1, T2, T3, T4, T5, T6>() {
+                private CrossParameterValidator<Tuple6<T1, T2, T3, T4, T5, T6>> validator = Result::success;
+
+                @Override
+                public Stage2_6<T1, T2, T3, T4, T5, T6> validate(final CrossParameterValidator<Tuple6<T1, T2, T3, T4, T5, T6>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN6<Promise<R>, T1, T2, T3, T4, T5, T6> fn) {
+                    final FN1<Result<Tuple6<T1, T2, T3, T4, T5, T6>>, RequestContext> extractor =
+                            context -> tuple(p1.apply(context),
+                                             p2.apply(context),
+                                             p3.apply(context),
+                                             p4.apply(context),
+                                             p5.apply(context),
+                                             p6.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1, T2, T3, T4, T5, T6, T7> Stage2_7<T1, T2, T3, T4, T5, T6, T7> with(final Parameter<T1> p1,
+                                                                                      final Parameter<T2> p2,
+                                                                                      final Parameter<T3> p3,
+                                                                                      final Parameter<T4> p4,
+                                                                                      final Parameter<T5> p5,
+                                                                                      final Parameter<T6> p6,
+                                                                                      final Parameter<T7> p7) {
+            return new Stage2_7<T1, T2, T3, T4, T5, T6, T7>() {
+                private CrossParameterValidator<Tuple7<T1, T2, T3, T4, T5, T6, T7>> validator = Result::success;
+
+                @Override
+                public Stage2_7<T1, T2, T3, T4, T5, T6, T7> validate(final CrossParameterValidator<Tuple7<T1, T2, T3, T4, T5, T6, T7>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN7<Promise<R>, T1, T2, T3, T4, T5, T6, T7> fn) {
+                    final FN1<Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>>, RequestContext> extractor =
+                            context -> tuple(p1.apply(context),
+                                             p2.apply(context),
+                                             p3.apply(context),
+                                             p4.apply(context),
+                                             p5.apply(context),
+                                             p6.apply(context),
+                                             p7.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+
+            };
+        }
+
+        @Override
+        public <T1, T2, T3, T4, T5, T6, T7, T8> Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> with(final Parameter<T1> p1,
+                                                                                              final Parameter<T2> p2,
+                                                                                              final Parameter<T3> p3,
+                                                                                              final Parameter<T4> p4,
+                                                                                              final Parameter<T5> p5,
+                                                                                              final Parameter<T6> p6,
+                                                                                              final Parameter<T7> p7,
+                                                                                              final Parameter<T8> p8) {
+            return new Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8>() {
+                private CrossParameterValidator<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> validator = Result::success;
+
+                @Override
+                public Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> validate(final CrossParameterValidator<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN8<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8> fn) {
+                    final FN1<Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>, RequestContext> extractor =
+                            context -> tuple(p1.apply(context),
+                                             p2.apply(context),
+                                             p3.apply(context),
+                                             p4.apply(context),
+                                             p5.apply(context),
+                                             p6.apply(context),
+                                             p7.apply(context),
+                                             p8.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
+        }
+
+        @Override
+        public <T1, T2, T3, T4, T5, T6, T7, T8, T9> Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> with(final Parameter<T1> p1,
+                                                                                                      final Parameter<T2> p2,
+                                                                                                      final Parameter<T3> p3,
+                                                                                                      final Parameter<T4> p4,
+                                                                                                      final Parameter<T5> p5,
+                                                                                                      final Parameter<T6> p6,
+                                                                                                      final Parameter<T7> p7,
+                                                                                                      final Parameter<T8> p8,
+                                                                                                      final Parameter<T9> p9) {
+            return new Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9>() {
+                private CrossParameterValidator<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> validator = Result::success;
+
+                @Override
+                public Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> validate(final CrossParameterValidator<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> validator) {
+                    this.validator = validator;
+                    return this;
+                }
+
+                @Override
+                public <R> Route then(FN9<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8, T9> fn) {
+                    final FN1<Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>, RequestContext> extractor =
+                            context -> tuple(p1.apply(context),
+                                             p2.apply(context),
+                                             p3.apply(context),
+                                             p4.apply(context),
+                                             p5.apply(context),
+                                             p6.apply(context),
+                                             p7.apply(context),
+                                             p8.apply(context),
+                                             p9.apply(context)).map(Result::zip);
+                    return setHandler(extractor.then(result -> result.flatMap(validator)
+                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                }
+            };
         }
     }
 }

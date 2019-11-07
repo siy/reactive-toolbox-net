@@ -7,7 +7,7 @@ import org.reactivetoolbox.net.http.server.NativeBuffer;
 import org.reactivetoolbox.net.http.server.RequestContext;
 
 //TODO: add documentation to route
-public interface Route {
+public interface Route extends Prefixed<Route> {
     FN1<Promise<NativeBuffer>, RequestContext> handler();
 
     ContentType inputType();
