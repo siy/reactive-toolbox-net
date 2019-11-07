@@ -1,5 +1,5 @@
 package org.reactivetoolbox.net.http.server;
 
-public interface RequestContext extends ParsingContext {
+public interface RequestContext {
     NativeBuffer allocate();
 }

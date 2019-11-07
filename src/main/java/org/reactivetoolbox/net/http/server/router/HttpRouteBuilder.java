@@ -12,6 +12,7 @@ import org.reactivetoolbox.core.lang.Functions.FN7;
 import org.reactivetoolbox.core.lang.Functions.FN8;
 import org.reactivetoolbox.core.lang.Functions.FN9;
 import org.reactivetoolbox.core.lang.Result;
+import org.reactivetoolbox.core.lang.Tuple;
 import org.reactivetoolbox.core.lang.Tuple.Tuple1;
 import org.reactivetoolbox.core.lang.Tuple.Tuple2;
 import org.reactivetoolbox.core.lang.Tuple.Tuple3;
@@ -23,10 +24,11 @@ import org.reactivetoolbox.core.lang.Tuple.Tuple8;
 import org.reactivetoolbox.core.lang.Tuple.Tuple9;
 import org.reactivetoolbox.net.http.ContentType;
 import org.reactivetoolbox.net.http.Method;
+import org.reactivetoolbox.net.http.server.NativeBuffer;
 import org.reactivetoolbox.net.http.server.RequestContext;
+import org.reactivetoolbox.net.http.server.router.impl.RouteImpl;
 
 import static org.reactivetoolbox.core.lang.Result.success;
-import static org.reactivetoolbox.core.lang.Tuple.Tuple0;
 import static org.reactivetoolbox.core.lang.Tuple.tuple;
 import static org.reactivetoolbox.net.http.Method.CONNECT;
 import static org.reactivetoolbox.net.http.Method.DELETE;
@@ -124,35 +126,35 @@ public final class HttpRouteBuilder {
 
         Stage2_0 without();
 
-        <T1> Stage2_1<T1> with(final Parameter<T1> p1);
+        <T1> Stage2_1<T1> with(final RequestParameter<T1> p1);
 
-        <T1, T2> Stage2_2<T1, T2> with(final Parameter<T1> p1, final Parameter<T2> p2);
+        <T1, T2> Stage2_2<T1, T2> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2);
 
-        <T1, T2, T3> Stage2_3<T1, T2, T3> with(final Parameter<T1> p1, final Parameter<T2> p2, final Parameter<T3> p3);
+        <T1, T2, T3> Stage2_3<T1, T2, T3> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2, final RequestParameter<T3> p3);
 
-        <T1, T2, T3, T4> Stage2_4<T1, T2, T3, T4> with(final Parameter<T1> p1, final Parameter<T2> p2,
-                                                       final Parameter<T3> p3, final Parameter<T4> p4);
+        <T1, T2, T3, T4> Stage2_4<T1, T2, T3, T4> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2,
+                                                       final RequestParameter<T3> p3, final RequestParameter<T4> p4);
 
-        <T1, T2, T3, T4, T5> Stage2_5<T1, T2, T3, T4, T5> with(final Parameter<T1> p1, final Parameter<T2> p2, final Parameter<T3> p3,
-                                                               final Parameter<T4> p4, final Parameter<T5> p5);
+        <T1, T2, T3, T4, T5> Stage2_5<T1, T2, T3, T4, T5> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2, final RequestParameter<T3> p3,
+                                                               final RequestParameter<T4> p4, final RequestParameter<T5> p5);
 
-        <T1, T2, T3, T4, T5, T6> Stage2_6<T1, T2, T3, T4, T5, T6> with(final Parameter<T1> p1, final Parameter<T2> p2, final Parameter<T3> p3,
-                                                                       final Parameter<T4> p4, final Parameter<T5> p5, final Parameter<T6> p6);
+        <T1, T2, T3, T4, T5, T6> Stage2_6<T1, T2, T3, T4, T5, T6> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2, final RequestParameter<T3> p3,
+                                                                       final RequestParameter<T4> p4, final RequestParameter<T5> p5, final RequestParameter<T6> p6);
 
-        <T1, T2, T3, T4, T5, T6, T7> Stage2_7<T1, T2, T3, T4, T5, T6, T7> with(final Parameter<T1> p1, final Parameter<T2> p2, final Parameter<T3> p3,
-                                                                               final Parameter<T4> p4, final Parameter<T5> p5, final Parameter<T6> p6,
-                                                                               final Parameter<T7> p7);
+        <T1, T2, T3, T4, T5, T6, T7> Stage2_7<T1, T2, T3, T4, T5, T6, T7> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2, final RequestParameter<T3> p3,
+                                                                               final RequestParameter<T4> p4, final RequestParameter<T5> p5, final RequestParameter<T6> p6,
+                                                                               final RequestParameter<T7> p7);
 
-        <T1, T2, T3, T4, T5, T6, T7, T8> Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> with(final Parameter<T1> p1, final Parameter<T2> p2,
-                                                                                       final Parameter<T3> p3, final Parameter<T4> p4,
-                                                                                       final Parameter<T5> p5, final Parameter<T6> p6,
-                                                                                       final Parameter<T7> p7, final Parameter<T8> p8);
+        <T1, T2, T3, T4, T5, T6, T7, T8> Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2,
+                                                                                       final RequestParameter<T3> p3, final RequestParameter<T4> p4,
+                                                                                       final RequestParameter<T5> p5, final RequestParameter<T6> p6,
+                                                                                       final RequestParameter<T7> p7, final RequestParameter<T8> p8);
 
-        <T1, T2, T3, T4, T5, T6, T7, T8, T9> Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> with(final Parameter<T1> p1, final Parameter<T2> p2,
-                                                                                               final Parameter<T3> p3, final Parameter<T4> p4,
-                                                                                               final Parameter<T5> p5, final Parameter<T6> p6,
-                                                                                               final Parameter<T7> p7, final Parameter<T8> p8,
-                                                                                               final Parameter<T9> p9);
+        <T1, T2, T3, T4, T5, T6, T7, T8, T9> Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2,
+                                                                                               final RequestParameter<T3> p3, final RequestParameter<T4> p4,
+                                                                                               final RequestParameter<T5> p5, final RequestParameter<T6> p6,
+                                                                                               final RequestParameter<T7> p7, final RequestParameter<T8> p8,
+                                                                                               final RequestParameter<T9> p9);
     }
 
     public interface Stage2_0 {
@@ -243,12 +245,21 @@ public final class HttpRouteBuilder {
 
         @Override
         public Route prefix(final String prefix) {
-            return null;
+            return route().prefix(prefix);
         }
 
-        private Route setHandler(final FN1<Promise<?>, RequestContext> handler) {
-            this.handler = handler;
-            return null;
+        private Route route() {
+            //TODO: finish it
+            final FN1<Promise<NativeBuffer>, RequestContext> fullHandler = null;
+
+            return new RouteImpl(Path.path(method, path), fullHandler, input, output);
+        }
+
+        private <T extends Tuple, R> Route setHandler(final FN1<Result<T>, RequestContext> extractor,
+                                                      CrossParameterValidator<T> validator,
+                                                      FN1<Promise<R>, T> handler) {
+            this.handler = extractor.then(result -> result.flatMap(validator).map(Promise::readyFail, handler));
+            return route();
         }
 
         @Override
@@ -256,14 +267,15 @@ public final class HttpRouteBuilder {
             return new Stage2_0() {
                 @Override
                 public <R> Route then(FN0<Promise<R>> fn) {
-                    final FN1<Result<Tuple0>, RequestContext> extractor = context -> success(tuple());
-                    return setHandler(extractor.then(result -> result.map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> success(tuple()),
+                                      Result::success,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1> Stage2_1<T1> with(final Parameter<T1> p1) {
+        public <T1> Stage2_1<T1> with(final RequestParameter<T1> p1) {
             return new Stage2_1<T1>() {
                 private CrossParameterValidator<Tuple1<T1>> validator = Result::success;
 
@@ -275,15 +287,15 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(final FN1<Promise<R>, T1> fn) {
-                    final FN1<Result<Tuple1<T1>>, RequestContext> extractor = context -> tuple(p1.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1, T2> Stage2_2<T1, T2> with(final Parameter<T1> p1, final Parameter<T2> p2) {
+        public <T1, T2> Stage2_2<T1, T2> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2) {
             return new Stage2_2<T1, T2>() {
                 private CrossParameterValidator<Tuple2<T1, T2>> validator = Result::success;
 
@@ -295,16 +307,16 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN2<Promise<R>, T1, T2> fn) {
-                    final FN1<Result<Tuple2<T1, T2>>, RequestContext> extractor = context -> tuple(p1.apply(context),
-                                                                                                   p2.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context),
+                                                       p2.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1, T2, T3> Stage2_3<T1, T2, T3> with(final Parameter<T1> p1, final Parameter<T2> p2, final Parameter<T3> p3) {
+        public <T1, T2, T3> Stage2_3<T1, T2, T3> with(final RequestParameter<T1> p1, final RequestParameter<T2> p2, final RequestParameter<T3> p3) {
             return new Stage2_3<T1, T2, T3>() {
                 private CrossParameterValidator<Tuple3<T1, T2, T3>> validator = Result::success;
 
@@ -316,20 +328,20 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN3<Promise<R>, T1, T2, T3> fn) {
-                    final FN1<Result<Tuple3<T1, T2, T3>>, RequestContext> extractor = context -> tuple(p1.apply(context),
-                                                                                                       p2.apply(context),
-                                                                                                       p3.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context),
+                                                       p2.apply(context),
+                                                       p3.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1, T2, T3, T4> Stage2_4<T1, T2, T3, T4> with(final Parameter<T1> p1,
-                                                              final Parameter<T2> p2,
-                                                              final Parameter<T3> p3,
-                                                              final Parameter<T4> p4) {
+        public <T1, T2, T3, T4> Stage2_4<T1, T2, T3, T4> with(final RequestParameter<T1> p1,
+                                                              final RequestParameter<T2> p2,
+                                                              final RequestParameter<T3> p3,
+                                                              final RequestParameter<T4> p4) {
             return new Stage2_4<T1, T2, T3, T4>() {
                 private CrossParameterValidator<Tuple4<T1, T2, T3, T4>> validator = Result::success;
 
@@ -341,22 +353,20 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN4<Promise<R>, T1, T2, T3, T4> fn) {
-                    final FN1<Result<Tuple4<T1, T2, T3, T4>>, RequestContext> extractor = context -> tuple(p1.apply(context),
-                                                                                                           p2.apply(context),
-                                                                                                           p3.apply(context),
-                                                                                                           p4.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context), p2.apply(context),
+                                                       p3.apply(context), p4.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1, T2, T3, T4, T5> Stage2_5<T1, T2, T3, T4, T5> with(final Parameter<T1> p1,
-                                                                      final Parameter<T2> p2,
-                                                                      final Parameter<T3> p3,
-                                                                      final Parameter<T4> p4,
-                                                                      final Parameter<T5> p5) {
+        public <T1, T2, T3, T4, T5> Stage2_5<T1, T2, T3, T4, T5> with(final RequestParameter<T1> p1,
+                                                                      final RequestParameter<T2> p2,
+                                                                      final RequestParameter<T3> p3,
+                                                                      final RequestParameter<T4> p4,
+                                                                      final RequestParameter<T5> p5) {
             return new Stage2_5<T1, T2, T3, T4, T5>() {
                 private CrossParameterValidator<Tuple5<T1, T2, T3, T4, T5>> validator = Result::success;
 
@@ -368,24 +378,21 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN5<Promise<R>, T1, T2, T3, T4, T5> fn) {
-                    final FN1<Result<Tuple5<T1, T2, T3, T4, T5>>, RequestContext> extractor = context -> tuple(p1.apply(context),
-                                                                                                               p2.apply(context),
-                                                                                                               p3.apply(context),
-                                                                                                               p4.apply(context),
-                                                                                                               p5.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context), p2.apply(context), p3.apply(context),
+                                                       p4.apply(context), p5.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1, T2, T3, T4, T5, T6> Stage2_6<T1, T2, T3, T4, T5, T6> with(final Parameter<T1> p1,
-                                                                              final Parameter<T2> p2,
-                                                                              final Parameter<T3> p3,
-                                                                              final Parameter<T4> p4,
-                                                                              final Parameter<T5> p5,
-                                                                              final Parameter<T6> p6) {
+        public <T1, T2, T3, T4, T5, T6> Stage2_6<T1, T2, T3, T4, T5, T6> with(final RequestParameter<T1> p1,
+                                                                              final RequestParameter<T2> p2,
+                                                                              final RequestParameter<T3> p3,
+                                                                              final RequestParameter<T4> p4,
+                                                                              final RequestParameter<T5> p5,
+                                                                              final RequestParameter<T6> p6) {
             return new Stage2_6<T1, T2, T3, T4, T5, T6>() {
                 private CrossParameterValidator<Tuple6<T1, T2, T3, T4, T5, T6>> validator = Result::success;
 
@@ -397,27 +404,22 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN6<Promise<R>, T1, T2, T3, T4, T5, T6> fn) {
-                    final FN1<Result<Tuple6<T1, T2, T3, T4, T5, T6>>, RequestContext> extractor =
-                            context -> tuple(p1.apply(context),
-                                             p2.apply(context),
-                                             p3.apply(context),
-                                             p4.apply(context),
-                                             p5.apply(context),
-                                             p6.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context),
+                                                       p5.apply(context), p6.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1, T2, T3, T4, T5, T6, T7> Stage2_7<T1, T2, T3, T4, T5, T6, T7> with(final Parameter<T1> p1,
-                                                                                      final Parameter<T2> p2,
-                                                                                      final Parameter<T3> p3,
-                                                                                      final Parameter<T4> p4,
-                                                                                      final Parameter<T5> p5,
-                                                                                      final Parameter<T6> p6,
-                                                                                      final Parameter<T7> p7) {
+        public <T1, T2, T3, T4, T5, T6, T7> Stage2_7<T1, T2, T3, T4, T5, T6, T7> with(final RequestParameter<T1> p1,
+                                                                                      final RequestParameter<T2> p2,
+                                                                                      final RequestParameter<T3> p3,
+                                                                                      final RequestParameter<T4> p4,
+                                                                                      final RequestParameter<T5> p5,
+                                                                                      final RequestParameter<T6> p6,
+                                                                                      final RequestParameter<T7> p7) {
             return new Stage2_7<T1, T2, T3, T4, T5, T6, T7>() {
                 private CrossParameterValidator<Tuple7<T1, T2, T3, T4, T5, T6, T7>> validator = Result::success;
 
@@ -429,30 +431,23 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN7<Promise<R>, T1, T2, T3, T4, T5, T6, T7> fn) {
-                    final FN1<Result<Tuple7<T1, T2, T3, T4, T5, T6, T7>>, RequestContext> extractor =
-                            context -> tuple(p1.apply(context),
-                                             p2.apply(context),
-                                             p3.apply(context),
-                                             p4.apply(context),
-                                             p5.apply(context),
-                                             p6.apply(context),
-                                             p7.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context),
+                                                       p5.apply(context), p6.apply(context), p7.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
-
             };
         }
 
         @Override
-        public <T1, T2, T3, T4, T5, T6, T7, T8> Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> with(final Parameter<T1> p1,
-                                                                                              final Parameter<T2> p2,
-                                                                                              final Parameter<T3> p3,
-                                                                                              final Parameter<T4> p4,
-                                                                                              final Parameter<T5> p5,
-                                                                                              final Parameter<T6> p6,
-                                                                                              final Parameter<T7> p7,
-                                                                                              final Parameter<T8> p8) {
+        public <T1, T2, T3, T4, T5, T6, T7, T8> Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8> with(final RequestParameter<T1> p1,
+                                                                                              final RequestParameter<T2> p2,
+                                                                                              final RequestParameter<T3> p3,
+                                                                                              final RequestParameter<T4> p4,
+                                                                                              final RequestParameter<T5> p5,
+                                                                                              final RequestParameter<T6> p6,
+                                                                                              final RequestParameter<T7> p7,
+                                                                                              final RequestParameter<T8> p8) {
             return new Stage2_8<T1, T2, T3, T4, T5, T6, T7, T8>() {
                 private CrossParameterValidator<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> validator = Result::success;
 
@@ -464,31 +459,24 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN8<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8> fn) {
-                    final FN1<Result<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>>, RequestContext> extractor =
-                            context -> tuple(p1.apply(context),
-                                             p2.apply(context),
-                                             p3.apply(context),
-                                             p4.apply(context),
-                                             p5.apply(context),
-                                             p6.apply(context),
-                                             p7.apply(context),
-                                             p8.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context),
+                                                       p5.apply(context), p6.apply(context), p7.apply(context), p8.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }
 
         @Override
-        public <T1, T2, T3, T4, T5, T6, T7, T8, T9> Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> with(final Parameter<T1> p1,
-                                                                                                      final Parameter<T2> p2,
-                                                                                                      final Parameter<T3> p3,
-                                                                                                      final Parameter<T4> p4,
-                                                                                                      final Parameter<T5> p5,
-                                                                                                      final Parameter<T6> p6,
-                                                                                                      final Parameter<T7> p7,
-                                                                                                      final Parameter<T8> p8,
-                                                                                                      final Parameter<T9> p9) {
+        public <T1, T2, T3, T4, T5, T6, T7, T8, T9> Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9> with(final RequestParameter<T1> p1,
+                                                                                                      final RequestParameter<T2> p2,
+                                                                                                      final RequestParameter<T3> p3,
+                                                                                                      final RequestParameter<T4> p4,
+                                                                                                      final RequestParameter<T5> p5,
+                                                                                                      final RequestParameter<T6> p6,
+                                                                                                      final RequestParameter<T7> p7,
+                                                                                                      final RequestParameter<T8> p8,
+                                                                                                      final RequestParameter<T9> p9) {
             return new Stage2_9<T1, T2, T3, T4, T5, T6, T7, T8, T9>() {
                 private CrossParameterValidator<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> validator = Result::success;
 
@@ -500,18 +488,10 @@ public final class HttpRouteBuilder {
 
                 @Override
                 public <R> Route then(FN9<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8, T9> fn) {
-                    final FN1<Result<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>, RequestContext> extractor =
-                            context -> tuple(p1.apply(context),
-                                             p2.apply(context),
-                                             p3.apply(context),
-                                             p4.apply(context),
-                                             p5.apply(context),
-                                             p6.apply(context),
-                                             p7.apply(context),
-                                             p8.apply(context),
-                                             p9.apply(context)).map(Result::zip);
-                    return setHandler(extractor.then(result -> result.flatMap(validator)
-                                                                     .map(Promise::readyFail, fn.bindTuple())));
+                    return setHandler(context -> tuple(p1.apply(context), p2.apply(context), p3.apply(context), p4.apply(context), p5.apply(context),
+                                                       p6.apply(context), p7.apply(context), p8.apply(context), p9.apply(context)).map(Result::zip),
+                                      validator,
+                                      fn.bindTuple());
                 }
             };
         }

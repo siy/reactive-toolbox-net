@@ -10,6 +10,8 @@ import org.reactivetoolbox.net.http.server.RequestContext;
 public interface Route extends Prefixed<Route> {
     FN1<Promise<NativeBuffer>, RequestContext> handler();
 
+    Path path();
+
     ContentType inputType();
     ContentType outputType();
 }

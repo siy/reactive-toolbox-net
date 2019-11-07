@@ -5,11 +5,11 @@ import org.reactivetoolbox.core.lang.TypeToken;
 
 //TODO: finish it
 public interface HttpParameters {
-    static <T> Parameter<Option<T>> inPath(final Class<T> type, final String name) {
+    static <T> RequestParameter<Option<T>> inPath(final Class<T> type, final String name) {
         return null;
     }
 
-    static <T> Parameter<Option<T>> inPath(final TypeToken<T> type, final String name) {
+    static <T> RequestParameter<Option<T>> inPath(final TypeToken<T> type, final String name) {
         return null;
     }
 
