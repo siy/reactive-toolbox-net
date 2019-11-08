@@ -3,6 +3,7 @@ package org.reactivetoolbox.net.http.server;
 import org.reactivetoolbox.core.lang.List;
 import org.reactivetoolbox.core.lang.Option;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.reactivetoolbox.core.lang.List.list;
@@ -37,7 +38,7 @@ public interface ParsingContext {
         };
     }
 
-    static ParsingContext context(Map<String, List<String>> result) {
+    static ParsingContext context(final Map<String, List<String>> result) {
         return new ParsingContext() {
             @Override
             public Option<String> content() {

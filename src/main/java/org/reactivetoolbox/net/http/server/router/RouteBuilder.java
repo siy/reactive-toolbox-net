@@ -11,6 +11,7 @@ import org.reactivetoolbox.core.lang.Functions.FN6;
 import org.reactivetoolbox.core.lang.Functions.FN7;
 import org.reactivetoolbox.core.lang.Functions.FN8;
 import org.reactivetoolbox.core.lang.Functions.FN9;
+import org.reactivetoolbox.core.lang.List;
 import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.lang.Tuple;
 import org.reactivetoolbox.core.lang.Tuple.Tuple1;
@@ -26,8 +27,8 @@ import org.reactivetoolbox.net.http.ContentType;
 import org.reactivetoolbox.net.http.Method;
 import org.reactivetoolbox.net.http.server.NativeBuffer;
 import org.reactivetoolbox.net.http.server.RequestContext;
-import org.reactivetoolbox.net.http.server.router.impl.RouteImpl;
 
+import static org.reactivetoolbox.core.lang.List.*;
 import static org.reactivetoolbox.core.lang.Result.success;
 import static org.reactivetoolbox.core.lang.Tuple.tuple;
 import static org.reactivetoolbox.net.http.Method.CONNECT;
@@ -40,12 +41,9 @@ import static org.reactivetoolbox.net.http.Method.POST;
 import static org.reactivetoolbox.net.http.Method.PUT;
 import static org.reactivetoolbox.net.http.Method.TRACE;
 
-public final class HttpRouteBuilder {
-    private HttpRouteBuilder() {
+public final class RouteBuilder {
+    private RouteBuilder() {
     }
-//    static List<Route> with(final String path, final MutableRoute... routes) {
-//
-//    }
 
     static Stage1 options() {
         return new Builder(OPTIONS);
@@ -252,7 +250,7 @@ public final class HttpRouteBuilder {
             //TODO: finish it
             final FN1<Promise<NativeBuffer>, RequestContext> fullHandler = null;
 
-            return new RouteImpl(Path.path(method, path), fullHandler, input, output);
+            return Route.route(Path.path(method, path), fullHandler, input, output);
         }
 
         private <T extends Tuple, R> Route setHandler(final FN1<Result<T>, RequestContext> extractor,

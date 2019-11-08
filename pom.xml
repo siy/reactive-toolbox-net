@@ -114,6 +114,7 @@
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.http.server=ALL-UNNAMED
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.http.server.netty=ALL-UNNAMED
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.http.server.router=ALL-UNNAMED
+                        --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.http.server.router.impl=ALL-UNNAMED
                         ${jaCoCoArgLine}
                         -Xmx1024m
                     </argLine>

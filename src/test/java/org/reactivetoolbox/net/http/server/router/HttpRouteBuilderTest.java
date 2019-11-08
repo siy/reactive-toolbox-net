@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.reactivetoolbox.net.http.ContentType;
 
 import static org.reactivetoolbox.core.async.Promise.readyOk;
-import static org.reactivetoolbox.net.http.server.router.HttpParameters.inPath;
-import static org.reactivetoolbox.net.http.server.router.HttpRouteBuilder.get;
+import static org.reactivetoolbox.net.http.server.router.RequestParameters.inPath;
+import static org.reactivetoolbox.net.http.server.router.RouteBuilder.get;
 
 class HttpRouteBuilderTest {
 

@@ -8,6 +8,7 @@ import org.reactivetoolbox.net.http.server.ParsingContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.compile;
@@ -36,6 +37,7 @@ public abstract class Path implements Prefixed<Path> {
 
     public abstract ParsingContext extract(final String uri);
     public abstract boolean matches(final String uri);
+    public abstract boolean exact();
 
     protected abstract String source();
 
@@ -78,6 +80,11 @@ public abstract class Path implements Prefixed<Path> {
                 protected String source() {
                     return normalizedPath;
                 }
+
+                @Override
+                public boolean exact() {
+                    return false;
+                }
             });
         } else {
             return new Path(method, normalizedPath) {
@@ -95,8 +102,21 @@ public abstract class Path implements Prefixed<Path> {
                 protected String source() {
                     return normalizedPath;
                 }
+
+                @Override
+                public boolean exact() {
+                    return true;
+                }
             };
         }
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ",  "Path(", ")")
+                .add(method.name())
+                .add("\"" + source() + "\"")
+                .toString();
     }
 
     private static final Pattern PARAMETER_PATTERN = compile("(?:/)(\\{\\w+})");
@@ -106,7 +126,7 @@ public abstract class Path implements Prefixed<Path> {
         return PARAMETER_PATTERN.matcher(path).find();
     }
 
-    private static String normalize(final String path) {
+    public static String normalize(final String path) {
         if (path == null || path.isBlank() || "/".equals(path)) {
             return "/";
         }

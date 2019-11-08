@@ -15,7 +15,7 @@ import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.lang.ThrowingFunctions;
 import org.reactivetoolbox.net.http.server.ServerErrors;
-import org.reactivetoolbox.net.http.server.router.HttpRouter;
+import org.reactivetoolbox.net.http.server.router.Router;
 
 import static org.reactivetoolbox.core.lang.ThrowingFunctions.lift;
 
@@ -29,10 +29,10 @@ class NettyServerInitializer extends ChannelInitializer<SocketChannel> {
                                                             certificate.privateKey())
                                                  .sslProvider(SslProvider.JDK)
                                                  .build());
-    private final HttpRouter router;
+    private final Router router;
     private final ServerConfig config;
 
-    NettyServerInitializer(final HttpRouter router, final ServerConfig config) {
+    NettyServerInitializer(final Router router, final ServerConfig config) {
         this.router = router;
         this.config = config;
     }

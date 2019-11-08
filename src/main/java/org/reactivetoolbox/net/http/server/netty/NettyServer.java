@@ -19,7 +19,7 @@ import org.reactivetoolbox.core.lang.Result;
 import org.reactivetoolbox.core.lang.Tuple.Tuple3;
 import org.reactivetoolbox.core.lang.support.WebFailureTypes;
 import org.reactivetoolbox.net.http.server.Server;
-import org.reactivetoolbox.net.http.server.router.HttpRouter;
+import org.reactivetoolbox.net.http.server.router.Router;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,7 +34,7 @@ import static org.reactivetoolbox.core.lang.Tuple.tuple;
  * The WebServer class is a convenience wrapper for the Netty HTTP server.
  */
 public class NettyServer implements Server<ByteBuf> {
-    private final HttpRouter router;
+    private final Router router;
     private final ServerConfig config;
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicReference<EventLoopGroup> parentGroupHolder = new AtomicReference<>();
@@ -46,7 +46,7 @@ public class NettyServer implements Server<ByteBuf> {
      * @param config
      * @param router
      */
-    public NettyServer(final ServerConfig config, final HttpRouter router) {
+    public NettyServer(final ServerConfig config, final Router router) {
         this.router = router;
         this.config = config;
     }

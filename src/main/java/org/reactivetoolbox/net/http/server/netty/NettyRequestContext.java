@@ -9,9 +9,18 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.QueryStringDecoder;
+import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.net.http.ContentType;
+import org.reactivetoolbox.net.http.Method;
 import org.reactivetoolbox.net.http.server.NativeBuffer;
+import org.reactivetoolbox.net.http.server.ParsingContext;
 import org.reactivetoolbox.net.http.server.RequestContext;
+import org.reactivetoolbox.net.http.server.router.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
@@ -24,7 +33,10 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import static java.time.ZoneOffset.UTC;
 import static java.time.ZonedDateTime.now;
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
+import static org.reactivetoolbox.core.lang.Suppliers.lazy;
+import static org.reactivetoolbox.net.http.server.ParsingContext.*;
 import static org.reactivetoolbox.net.http.server.netty.NettyNativeBuffer.buffer;
+import static org.reactivetoolbox.net.http.server.router.Utils.*;
 
 class NettyRequestContext implements RequestContext {
     private static final String SERVER_NAME = "Reactive Toolbox HTTP Server (Netty)";
@@ -33,12 +45,30 @@ class NettyRequestContext implements RequestContext {
     private final FullHttpRequest request;
     private final ServerConfig config;
     private final boolean keepAlive;
+    private final QueryStringDecoder queryDecoder;
+    private final Supplier<ParsingContext> headerContext;
+    private final Supplier<ParsingContext> queryContext;
+    private Supplier<ParsingContext> pathParameterContext;
+    private final Method method;
 
     NettyRequestContext(final ChannelHandlerContext context, final FullHttpRequest request, final ServerConfig config) {
         this.context = context;
         this.request = request;
+        //TODO: use safer method for conversion
+        this.method = Method.valueOf(request.method().name());
         this.keepAlive = HttpUtil.isKeepAlive(request);
         this.config = config;
+        this.queryDecoder = new QueryStringDecoder(request.uri());
+        this.queryContext = lazy(() -> context(transform(queryDecoder.parameters())));
+        this.headerContext = lazy(() -> context(transform(extractHeaders(request.headers()))));
+    }
+
+    private Map<String, java.util.List<String>> extractHeaders(final HttpHeaders headers) {
+        final var map = new HashMap<String, java.util.List<String>>();
+
+        headers.forEach(header -> map.compute(header.getKey(), (key, oldValue) -> listCombiner(key, oldValue, header.getValue())));
+
+        return map;
     }
 
     public void writeResponse(final HttpResponseStatus status,
@@ -82,5 +112,42 @@ class NettyRequestContext implements RequestContext {
     public NativeBuffer allocate() {
         return buffer(context.alloc().buffer(config.initialBufferSize(),
                                              config.maxBufferSize()));
+    }
+
+    @Override
+    public RequestContext preparePathContext(final FN1<ParsingContext, String> extractor) {
+        pathParameterContext = lazy(extractor.bind(queryDecoder.path())::apply);
+        return this;
+    }
+
+    @Override
+    public ParsingContext pathContext() {
+        return pathParameterContext.get();
+    }
+
+    @Override
+    public ParsingContext queryContext() {
+        return queryContext.get();
+    }
+
+    @Override
+    public ParsingContext headerContext() {
+        return headerContext.get();
+    }
+
+    @Override
+    public String path() {
+        return queryDecoder.path();
+    }
+
+    @Override
+    public Method method() {
+        return method;
+    }
+
+    //TODO: finish it
+    @Override
+    public ParsingContext bodyContext() {
+        return null;
     }
 }

@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import org.reactivetoolbox.core.lang.Failure;
-import org.reactivetoolbox.net.http.server.router.HttpRouter;
+import org.reactivetoolbox.net.http.server.router.Router;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
@@ -20,10 +20,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.reactivetoolbox.net.http.ContentType.TEXT_PLAIN;
 
 class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
-    private final HttpRouter router;
+    private final Router router;
     private final ServerConfig config;
 
-    NettyServerHandler(final HttpRouter router, final ServerConfig config) {
+    NettyServerHandler(final Router router, final ServerConfig config) {
         this.router = router;
         this.config = config;
     }
@@ -51,18 +51,18 @@ class NettyServerHandler extends SimpleChannelInboundHandler<Object> {
         //TODO: configurable error response format
         final var context = new NettyRequestContext(ctx, request, config);
 
-        router.locate(context)
-              .onSuccess(route -> route.handler()
-                                       .apply(context)
-                                       .onSuccess(buffer -> context.writeResponse(OK,
-                                                                                  route.outputType(),
-                                                                                  ((NettyNativeBuffer) buffer).unwrap()))
-                                       .onFailure(failure -> context.writeResponse(toStatus(failure),
-                                                                                   TEXT_PLAIN,
-                                                                                   serializeString(failure.message()))))
-              .onFailure(failure -> context.writeResponse(NOT_FOUND,
-                                                          TEXT_PLAIN,
-                                                          serializeString(NOT_FOUND.reasonPhrase())));
+        router.locate(context.method(), context.path())
+              .whenPresent(route -> route.handler()
+                                         .apply(context)
+                                         .onSuccess(buffer -> context.writeResponse(OK,
+                                                                                    route.outputType(),
+                                                                                    ((NettyNativeBuffer) buffer).unwrap()))
+                                         .onFailure(failure -> context.writeResponse(toStatus(failure),
+                                                                                     TEXT_PLAIN,
+                                                                                     serializeString(failure.message()))))
+              .whenEmpty(() -> context.writeResponse(NOT_FOUND,
+                                                     TEXT_PLAIN,
+                                                     serializeString(NOT_FOUND.reasonPhrase())));
     }
 
     private static HttpResponseStatus toStatus(final Failure failure) {
