@@ -27,6 +27,11 @@ public class NettyNativeBuffer implements NativeBuffer {
     }
 
     @Override
+    public String asString() {
+        return buffer.toString(UTF_8);
+    }
+
+    @Override
     public void release() {
         buffer.release();
     }
