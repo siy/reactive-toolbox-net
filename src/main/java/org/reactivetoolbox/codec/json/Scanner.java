@@ -75,7 +75,11 @@ public class Scanner {
             }
         }
 
-        return option(token(TokenType.NUMBER, hasDot, text.toString()));
+        if (hasDot && text.charAt(text.length() - 1) == '.') {
+            return Option.empty();
+        }
+
+        return option(token(hasDot ? TokenType.NUMBER : TokenType.INTEGER, text.toString()));
     }
 
     private Option<Token> nextLiteral() {
@@ -96,12 +100,13 @@ public class Scanner {
         reader.skip();
 
         while (true) {
-            text.append(reader.skip());
             final var current = reader.underCursor();
 
             if (current == CharType.QUOTE) {
                 break;
             }
+
+            text.append(reader.skip());
 
             if (current == CharType.EOF) {
                 return Option.empty();

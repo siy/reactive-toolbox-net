@@ -17,25 +17,15 @@ public class Token {
     public static final Option<Token> EOF = option(token(TokenType.EOF, ""));
 
     private final TokenType tokenType;
-    private final boolean hasDecimalDot;
     private final String text;
 
-    private Token(final TokenType tokenType, final boolean hasDecimalDot, final String text) {
+    private Token(final TokenType tokenType, final String text) {
         this.tokenType = tokenType;
-        this.hasDecimalDot = hasDecimalDot;
         this.text = text;
     }
 
-    public static Token token(final TokenType tokenType, boolean hasDot, final String text) {
-        return new Token(tokenType, hasDot, text);
-    }
-
     public static Token token(final TokenType tokenType, final String text) {
-        return new Token(tokenType, false, text);
-    }
-
-    public boolean hasDecimalPart() {
-        return hasDecimalDot;
+        return new Token(tokenType, text);
     }
 
     public TokenType type() {
@@ -50,10 +40,9 @@ public class Token {
     public String toString() {
         return new StringJoiner(", ", "Token(", ")")
                 .add(tokenType.name())
-                .add(Objects.toString(hasDecimalDot))
                 .add("'" + text + "'")
                 .toString();
     }
 
-    public enum TokenType { LB, RB, LCB, RCB, COMMA, SEMICOLON, EOF, STRING, NUMBER, LITERAL}
+    public enum TokenType { LB, RB, LCB, RCB, COMMA, SEMICOLON, EOF, STRING, NUMBER, INTEGER, LITERAL}
 }
