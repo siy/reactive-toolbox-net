@@ -1,20 +1,19 @@
 package org.reactivetoolbox.codec.json;
 
-import org.reactivetoolbox.core.lang.Option;
+import org.reactivetoolbox.core.lang.Result;
 
-import java.util.Objects;
 import java.util.StringJoiner;
 
-import static org.reactivetoolbox.core.lang.Option.option;
+import static org.reactivetoolbox.core.lang.Result.success;
 
 public class Token {
-    public static final Option<Token> LeftBracket = option(token(TokenType.LB, "["));
-    public static final Option<Token> LeftCurlyBracket = option(token(TokenType.LCB, "{"));
-    public static final Option<Token> RightBracket = option(token(TokenType.RB, "]"));
-    public static final Option<Token> RightCurlyBracket = option(token(TokenType.RCB, "}"));
-    public static final Option<Token> Comma = option(token(TokenType.COMMA, ","));
-    public static final Option<Token> Semicolon = option(token(TokenType.SEMICOLON, ":"));
-    public static final Option<Token> EOF = option(token(TokenType.EOF, ""));
+    public static final Result<Token> LeftBracket = success(token(TokenType.LB, "["));
+    public static final Result<Token> LeftCurlyBracket = success(token(TokenType.LCB, "{"));
+    public static final Result<Token> RightBracket = success(token(TokenType.RB, "]"));
+    public static final Result<Token> RightCurlyBracket = success(token(TokenType.RCB, "}"));
+    public static final Result<Token> Comma = success(token(TokenType.COMMA, ","));
+    public static final Result<Token> Semicolon = success(token(TokenType.SEMICOLON, ":"));
+    public static final Result<Token> EOF = success(token(TokenType.EOF, ""));
 
     private final TokenType tokenType;
     private final String text;

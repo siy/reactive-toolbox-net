@@ -2,10 +2,11 @@ package org.reactivetoolbox.codec.json;
 
 import org.reactivetoolbox.codec.json.Token.TokenType;
 import org.reactivetoolbox.core.lang.Option;
+import org.reactivetoolbox.core.lang.Result;
 
+import static org.reactivetoolbox.codec.json.CodecFailure.*;
 import static org.reactivetoolbox.codec.json.Token.token;
-import static org.reactivetoolbox.core.lang.Option.empty;
-import static org.reactivetoolbox.core.lang.Option.option;
+import static org.reactivetoolbox.core.lang.Result.success;
 
 public class Scanner {
     private final CharReader reader;
@@ -18,7 +19,7 @@ public class Scanner {
         return new Scanner(input.toCharArray());
     }
 
-    public Option<Token> next() {
+    public Result<Token> next() {
         skipWs();
 
         switch (reader.underCursor()) {
@@ -52,7 +53,7 @@ public class Scanner {
         }
     }
 
-    private Option<Token> nextNumber() {
+    private Result<Token> nextNumber() {
         final var text = new StringBuilder(64);
         boolean hasDot = false;
 
@@ -64,7 +65,7 @@ public class Scanner {
 
             if (current == CharType.DOT) {
                 if (hasDot) {   //Double dot
-                    return empty();
+                    return failure("Invalid number format, double dot");
                 }
                 hasDot = true;
                 continue;
@@ -76,13 +77,13 @@ public class Scanner {
         }
 
         if (hasDot && text.charAt(text.length() - 1) == '.') {
-            return Option.empty();
+            return failure("Invalid number format, missing digit after dot");
         }
 
-        return option(token(hasDot ? TokenType.NUMBER : TokenType.INTEGER, text.toString()));
+        return success(token(hasDot ? TokenType.NUMBER : TokenType.INTEGER, text.toString()));
     }
 
-    private Option<Token> nextLiteral() {
+    private Result<Token> nextLiteral() {
         final var text = new StringBuilder(32);
 
         do {
@@ -90,10 +91,10 @@ public class Scanner {
             reader.skip();
         } while (reader.underCursor() == CharType.ALPHA);
 
-        return option(token(TokenType.LITERAL, text.toString()));
+        return success(token(TokenType.LITERAL, text.toString()));
     }
 
-    private Option<Token> nextString() {
+    private Result<Token> nextString() {
         final var text = new StringBuilder(256);
 
         //Skip leading quote
@@ -109,14 +110,14 @@ public class Scanner {
             text.append(reader.skip());
 
             if (current == CharType.EOF) {
-                return Option.empty();
+                return failure("Premature EOF");
             }
         }
 
         //Skip trailing quote
         reader.skip();
 
-        return option(token(TokenType.STRING, text.toString()));
+        return success(token(TokenType.STRING, text.toString()));
     }
 
     private void skipWs() {
