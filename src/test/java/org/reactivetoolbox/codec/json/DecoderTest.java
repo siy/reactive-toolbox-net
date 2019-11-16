@@ -31,4 +31,17 @@ class DecoderTest {
                        .onSuccess(v -> assertEquals(empty(), v))
                        .onFailure(f -> fail());
     }
+
+    @Test
+    void canReadStringPrimitives() {
+        decoder("\"one\"").read(String.class)
+                          .onSuccess(v -> assertEquals(option("one"), v))
+                          .onFailure(f -> fail());
+        decoder("\"\"").read(String.class)
+                          .onSuccess(v -> assertEquals(option(""), v))
+                          .onFailure(f -> fail());
+        decoder("null").read(String.class)
+                       .onSuccess(v -> assertEquals(empty(), v))
+                       .onFailure(f -> fail());
+    }
 }

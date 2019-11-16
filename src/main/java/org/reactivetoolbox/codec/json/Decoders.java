@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.reactivetoolbox.codec.json.CodecError.*;
+import static org.reactivetoolbox.codec.json.Token.TokenType.*;
 import static org.reactivetoolbox.core.lang.Result.success;
 
 public interface Decoders {
@@ -29,19 +30,29 @@ public interface Decoders {
     }
 
     static Result<Option<Boolean>> bool(final Token input) {
-        return expect(input, Token.TokenType.LITERAL)
+        return expect(input, LITERAL)
                 .flatMap(Decoders::boolDecoder);
     }
 
-    static Result<Option<Boolean>> boolDecoder(String s) {
-        return "null".equals(s) ? answerEmpty():
-               "true".equals(s) ? answer(true) :
-               "false".equals(s) ? answer(false) :
-               error("Unknown value for boolean literal {0}", s);
+    static <T> Result<Option<T>> nullDecoder(String literal) {
+        return "null".equals(literal) ? answerEmpty()
+                                      : error("Unrecognized literal {0}", literal);
+    }
+
+    static Result<Option<Boolean>> boolDecoder(String literal) {
+        return "null".equals(literal) ? answerEmpty()
+                                      : "true".equals(literal) ? answer(true)
+                                                               : "false".equals(literal) ? answer(false)
+                                                                                         : error("Unknown value for boolean literal {0}", literal);
     }
 
     static Result<Option<String>> string(final Token input) {
-        return error("NOT IMPLEMENTED");
+        return expect(input, STRING).flatMap(Decoders::answer)
+                                    .or(() -> decodeNull(input));
+    }
+
+    static Result<Option<String>> decodeNull(final Token input) {
+        return expect(input, LITERAL).flatMap(Decoders::nullDecoder);
     }
 
     static Result<Option<Byte>> byteInt(final Token input) {
