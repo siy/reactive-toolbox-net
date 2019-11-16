@@ -109,7 +109,7 @@ public class NettyServer implements Server<ByteBuf> {
             return promise(promise -> bindFuture.addListener(v -> promise.resolve(Result.success(this))));
 
         } catch (final Exception e) {
-            return readyFail(Failure.with(WebFailureTypes.INTERNAL_SERVER_ERROR, "Server interrupted"));
+            return readyFail(Failure.failure(WebFailureTypes.INTERNAL_SERVER_ERROR, "Server interrupted"));
         }
     }
 }

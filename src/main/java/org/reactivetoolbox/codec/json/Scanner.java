@@ -1,10 +1,9 @@
 package org.reactivetoolbox.codec.json;
 
 import org.reactivetoolbox.codec.json.Token.TokenType;
-import org.reactivetoolbox.core.lang.Option;
 import org.reactivetoolbox.core.lang.Result;
 
-import static org.reactivetoolbox.codec.json.CodecFailure.*;
+import static org.reactivetoolbox.codec.json.CodecError.*;
 import static org.reactivetoolbox.codec.json.Token.token;
 import static org.reactivetoolbox.core.lang.Result.success;
 
@@ -65,7 +64,7 @@ public class Scanner {
 
             if (current == CharType.DOT) {
                 if (hasDot) {   //Double dot
-                    return failure("Invalid number format, double dot");
+                    return error("Invalid number format, double dot");
                 }
                 hasDot = true;
                 continue;
@@ -77,7 +76,7 @@ public class Scanner {
         }
 
         if (hasDot && text.charAt(text.length() - 1) == '.') {
-            return failure("Invalid number format, missing digit after dot");
+            return error("Invalid number format, missing digit after dot");
         }
 
         return success(token(hasDot ? TokenType.NUMBER : TokenType.INTEGER, text.toString()));
@@ -110,7 +109,7 @@ public class Scanner {
             text.append(reader.skip());
 
             if (current == CharType.EOF) {
-                return failure("Premature EOF");
+                return error("Premature EOF");
             }
         }
 

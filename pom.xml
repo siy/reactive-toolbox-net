@@ -109,6 +109,8 @@
                 <configuration>
                     <argLine>
                         --illegal-access=permit
+                        --add-opens org.reactivetoolbox.net/org.reactivetoolbox.codec=ALL-UNNAMED
+                        --add-opens org.reactivetoolbox.net/org.reactivetoolbox.codec.json=ALL-UNNAMED
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.experiment=ALL-UNNAMED
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.http=ALL-UNNAMED
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.http.server=ALL-UNNAMED
