@@ -1,5 +1,6 @@
 package org.reactivetoolbox.codec.json;
 
+import org.reactivetoolbox.codec.json.Token.TokenType;
 import org.reactivetoolbox.core.lang.Functions.FN1;
 import org.reactivetoolbox.core.lang.Option;
 import org.reactivetoolbox.core.lang.Result;
@@ -16,10 +17,10 @@ import static org.reactivetoolbox.codec.json.Token.TokenType.*;
 import static org.reactivetoolbox.core.lang.Result.success;
 
 public interface Decoders {
-    static Result<String> expect(final Token token, final Token.TokenType type) {
-        return token.type() == type
-               ? success(token.text())
-               : error("Unexpected token {0}", token.text());
+    static <T> Result<Option<T>> expect(final Token token, final TokenType type, final FN1<Result<Option<T>>, String> decoder) {
+        return token.type() == type ? decoder.apply(token.text()) :
+               token.type() == LITERAL ? nullDecoder(token.text()) :
+               error("Unexpected token {0}", token.text());
     }
 
     static <T> Result<Option<T>> answer(final T value) {
@@ -35,13 +36,8 @@ public interface Decoders {
                                       : error("Unrecognized literal {0}", literal);
     }
 
-    static <T> Result<Option<T>> decodeNull(final Token input) {
-        return expect(input, LITERAL).flatMap(Decoders::nullDecoder);
-    }
-
     static Result<Option<Boolean>> bool(final Token input) {
-        return expect(input, LITERAL)
-                .flatMap(Decoders::boolDecoder);
+        return expect(input, LITERAL, Decoders::boolDecoder);
     }
 
     static Result<Option<Boolean>> boolDecoder(String literal) {
@@ -52,28 +48,27 @@ public interface Decoders {
     }
 
     static Result<Option<String>> string(final Token input) {
-        return expect(input, STRING).flatMap(Decoders::answer)
-                                    .or(() -> decodeNull(input));
+        return expect(input, STRING, Decoders::answer);
     }
 
     static Result<Option<Byte>> byteInt(final Token input) {
-        return expect(input, INTEGER).flatMap(string -> integerDecoder(string, Byte.MIN_VALUE, Byte.MAX_VALUE, Long::byteValue))
-                                     .or(() -> decodeNull(input));
+        return expect(input, INTEGER,
+                      string -> integerDecoder(string, Byte.MIN_VALUE, Byte.MAX_VALUE, Long::byteValue));
     }
 
     static Result<Option<Short>> shortInt(final Token input) {
-        return expect(input, INTEGER).flatMap(string -> integerDecoder(string, Short.MIN_VALUE, Short.MAX_VALUE, Long::shortValue))
-                                     .or(() -> decodeNull(input));
+        return expect(input, INTEGER,
+                      string -> integerDecoder(string, Short.MIN_VALUE, Short.MAX_VALUE, Long::shortValue));
     }
 
     static Result<Option<Integer>> regularInt(final Token input) {
-        return expect(input, INTEGER).flatMap(string -> integerDecoder(string, Integer.MIN_VALUE, Integer.MAX_VALUE, Long::intValue))
-                                     .or(() -> decodeNull(input));
+        return expect(input, INTEGER,
+                      string -> integerDecoder(string, Integer.MIN_VALUE, Integer.MAX_VALUE, Long::intValue));
     }
 
     static Result<Option<Long>> longInt(final Token input) {
-        return expect(input, INTEGER).flatMap(string -> integerDecoder(string, Long.MIN_VALUE, Long.MAX_VALUE, Long::longValue))
-                                     .or(() -> decodeNull(input));
+        return expect(input, INTEGER,
+                      string -> integerDecoder(string, Long.MIN_VALUE, Long.MAX_VALUE, Long::longValue));
     }
 
     static <T extends Number> Result<Option<T>> integerDecoder(final String string, final long minValue, final long maxValue, final FN1<T, Long> mapper) {
@@ -85,7 +80,7 @@ public interface Decoders {
         return value.map($ -> Result.success(value),
                          val -> (val >= minValue && val <= maxValue) ? answer(val)
                                                                      : error("Value is out of bounds of the given type, value={0}, min={1}, max={2}",
-                                                                             value, minValue, maxValue));
+                                                                             val, minValue, maxValue));
 
     }
 

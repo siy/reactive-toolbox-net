@@ -44,6 +44,8 @@ public class Scanner {
                 return nextString();
             case ALPHA:
                 return nextLiteral();
+            case MINUS:
+            case PLUS:
             case DIGIT:
                 return nextNumber();
 
@@ -172,6 +174,10 @@ public class Scanner {
                     return CharType.SEMICOLON;
                 case '.':
                     return CharType.DOT;
+                case '+':
+                    return CharType.PLUS;
+                case '-':
+                    return CharType.MINUS;
             }
 
             if (Character.isDigit(chr)) {
