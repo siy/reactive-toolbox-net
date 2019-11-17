@@ -3,11 +3,18 @@ package org.reactivetoolbox.codec.json;
 import org.reactivetoolbox.codec.json.Token.TokenType;
 import org.reactivetoolbox.core.lang.Result;
 
-import static org.reactivetoolbox.codec.json.CodecError.*;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static org.reactivetoolbox.codec.json.CodecError.error;
 import static org.reactivetoolbox.codec.json.Token.token;
 import static org.reactivetoolbox.core.lang.Result.success;
 
 public class Scanner {
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[-+]?[0-9]+(\\.[0-9]+)?([eE][-+]?[0-9]+)?$");
+    private static final Set<CharType> VALID_IN_NUMBER = EnumSet.of(CharType.DOT, CharType.DIGIT, CharType.PLUS, CharType.MINUS);
+
     private final CharReader reader;
 
     private Scanner(final char[] input) {
@@ -56,32 +63,34 @@ public class Scanner {
 
     private Result<Token> nextNumber() {
         final var text = new StringBuilder(64);
+
         boolean hasDot = false;
 
         while (true) {
             text.append(reader.current());
             reader.skip();
 
-            final var current = reader.underCursor();
+            final var currentType = reader.underCursor();
 
-            if (current == CharType.DOT) {
-                if (hasDot) {   //Double dot
-                    return error("Invalid number format, double dot");
+            if (VALID_IN_NUMBER.contains(currentType)) {
+                if (currentType == CharType.DOT) {
+                    hasDot = true;
                 }
-                hasDot = true;
                 continue;
             }
 
-            if (current != CharType.DIGIT) {
-                break;
+            if (currentType == CharType.ALPHA && reader.current() == 'e' || reader.current() == 'E') {
+                continue;
+            }
+
+            final var input = text.toString();
+
+            if (NUMBER_PATTERN.matcher(input).matches()) {
+                return success(token(hasDot ? TokenType.NUMBER : TokenType.INTEGER, input));
+            } else {
+                return error("Invalid number {0}", input);
             }
         }
-
-        if (hasDot && text.charAt(text.length() - 1) == '.') {
-            return error("Invalid number format, missing digit after dot");
-        }
-
-        return success(token(hasDot ? TokenType.NUMBER : TokenType.INTEGER, text.toString()));
     }
 
     private Result<Token> nextLiteral() {

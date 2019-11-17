@@ -19,27 +19,27 @@ public class Decoder {
     private static final Map<Class, Deserializer> primitiveTypes = new HashMap<>();
 
     static {
-        add(Boolean.class, Decoders::bool);
-        add(boolean.class, Decoders::bool);
-        add(String.class, Decoders::string);
-        add(byte.class, Decoders::byteInt);
-        add(Byte.class, Decoders::byteInt);
-        add(short.class, Decoders::shortInt);
-        add(Short.class, Decoders::shortInt);
-        add(long.class, Decoders::longInt);
-        add(Long.class, Decoders::longInt);
-        add(int.class, Decoders::regularInt);
-        add(Integer.class, Decoders::regularInt);
-        add(float.class, Decoders::floatNumber);
-        add(Float.class, Decoders::floatNumber);
-        add(double.class, Decoders::doubleNumber);
-        add(Double.class, Decoders::doubleNumber);
-        add(BigDecimal.class, Decoders::bigDecimal);
-        add(LocalDate.class, Decoders::localDate);
-        add(LocalDateTime.class, Decoders::localDateTime);
-        add(ZonedDateTime.class, Decoders::zonedDateTime);
-        add(UUID.class, Decoders::uuid);
-        add(KSUID.class, Decoders::ksuid);
+        add(Boolean.class, TokenDecoders::bool);
+        add(boolean.class, TokenDecoders::bool);
+        add(String.class, TokenDecoders::string);
+        add(byte.class, TokenDecoders::byteInt);
+        add(Byte.class, TokenDecoders::byteInt);
+        add(short.class, TokenDecoders::shortInt);
+        add(Short.class, TokenDecoders::shortInt);
+        add(long.class, TokenDecoders::longInt);
+        add(Long.class, TokenDecoders::longInt);
+        add(int.class, TokenDecoders::regularInt);
+        add(Integer.class, TokenDecoders::regularInt);
+        add(float.class, TokenDecoders::floatNumber);
+        add(Float.class, TokenDecoders::floatNumber);
+        add(double.class, TokenDecoders::doubleNumber);
+        add(Double.class, TokenDecoders::doubleNumber);
+        add(BigDecimal.class, TokenDecoders::bigDecimal);
+        add(LocalDate.class, TokenDecoders::localDate);
+        add(LocalDateTime.class, TokenDecoders::localDateTime);
+        add(ZonedDateTime.class, TokenDecoders::zonedDateTime);
+        add(UUID.class, TokenDecoders::uuid);
+        add(KSUID.class, TokenDecoders::ksuid);
     }
 
     private static <T> void add(final Class<T> type, final Deserializer<T> decoder) {

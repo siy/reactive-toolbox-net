@@ -71,11 +71,11 @@ class ScannerTest {
 
     @Test
     void testParsingNumber0() {
-        final var scanner = Scanner.scanner("9.0");
+        final var scanner = Scanner.scanner("-9.0");
 
         scanner.next()
                .onSuccess(token -> assertEquals(TokenType.NUMBER, token.type()))
-               .onSuccess(token -> assertEquals("9.0", token.text()))
+               .onSuccess(token -> assertEquals("-9.0", token.text()))
                .onFailure(failure -> fail());
         checkEof(scanner);
     }
@@ -93,11 +93,72 @@ class ScannerTest {
 
     @Test
     void testParsingNumber2() {
-        final var scanner = Scanner.scanner("9.   ");
+        final var scanner = Scanner.scanner("-9.0e1");
+
+        scanner.next()
+               .onSuccess(token -> assertEquals(TokenType.NUMBER, token.type()))
+               .onSuccess(token -> assertEquals("-9.0e1", token.text()))
+               .onFailure(failure -> fail());
+        checkEof(scanner);
+    }
+
+    @Test
+    void testParsingNumber3() {
+        final var scanner = Scanner.scanner("+9.0E+5");
+
+        scanner.next()
+               .onSuccess(token -> assertEquals(TokenType.NUMBER, token.type()))
+               .onSuccess(token -> assertEquals("+9.0E+5", token.text()))
+               .onFailure(failure -> fail());
+        checkEof(scanner);
+    }
+
+    @Test
+    void testParsingNumber4() {
+        final var scanner = Scanner.scanner("- 3");
 
         scanner.next()
                .onSuccess(token -> fail());
-        checkEof(scanner);
+    }
+
+    @Test
+    void testParsingNumber5() {
+        final var scanner = Scanner.scanner("+3.");
+
+        scanner.next()
+               .onSuccess(token -> fail());
+    }
+
+    @Test
+    void testParsingNumber6() {
+        final var scanner = Scanner.scanner("-5.0e");
+
+        scanner.next()
+               .onSuccess(token -> fail());
+    }
+
+    @Test
+    void testParsingNumber7() {
+        final var scanner = Scanner.scanner("-5.0e+");
+
+        scanner.next()
+               .onSuccess(token -> fail());
+    }
+
+    @Test
+    void testParsingNumber8() {
+        final var scanner = Scanner.scanner("-5.0e-1e");
+
+        scanner.next()
+               .onSuccess(token -> fail());
+    }
+
+    @Test
+    void testParsingNumber9() {
+        final var scanner = Scanner.scanner("-5.0e-1e3");
+
+        scanner.next()
+               .onSuccess(token -> fail());
     }
 
     @Test
