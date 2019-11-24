@@ -155,7 +155,6 @@ class DecoderTest {
                        .onFailure(f -> fail());
     }
 
-
     @Test
     void canReadDoublePrimitives() {
         decoder("1234.563456e2").read(double.class)
@@ -186,7 +185,8 @@ class DecoderTest {
     @Test
     void canReadUUID() {
         decoder("\"e80b3c6e-37d6-406e-ac7e-9e82e5f03cc1\"").read(UUID.class)
-                                                           .onSuccess(v -> assertEquals(option(UUID.fromString("e80b3c6e-37d6-406e-ac7e-9e82e5f03cc1")), v))
+                                                           .onSuccess(v -> assertEquals(option(UUID.fromString("e80b3c6e-37d6-406e-ac7e-9e82e5f03cc1")),
+                                                                                        v))
                                                            .onFailure(f -> fail());
         decoder("null").read(UUID.class)
                        .onSuccess(v -> assertEquals(empty(), v))
@@ -197,11 +197,12 @@ class DecoderTest {
     void canReadKSUID() {
         KSUID id = KSUID.create();
         decoder("\"" + id.encoded() + "\"").read(KSUID.class)
-                                                  .onSuccess(v -> assertEquals(option(id), v))
-                                                  .onFailure(f -> fail());
+                                           .onSuccess(v -> assertEquals(option(id), v))
+                                           .onFailure(f -> fail());
         decoder("null").read(KSUID.class)
                        .onSuccess(v -> assertEquals(empty(), v))
                        .onFailure(f -> fail());
     }
     //TODO: test parsing dates
+
 }

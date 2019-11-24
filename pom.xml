@@ -29,7 +29,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.release>11</java.release>
+        <java.release>13</java.release>
 
         <!-- Dependencies versions -->
 
@@ -109,6 +109,7 @@
                 <configuration>
                     <argLine>
                         --illegal-access=permit
+                        --enable-preview
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.codec=ALL-UNNAMED
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.codec.json=ALL-UNNAMED
                         --add-opens org.reactivetoolbox.net/org.reactivetoolbox.net.experiment=ALL-UNNAMED
@@ -140,6 +141,7 @@
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <release>${java.release}</release>
+                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
