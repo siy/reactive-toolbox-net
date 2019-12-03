@@ -34,6 +34,11 @@ public interface RequestParameters {
         return assembly(RequestContext::headerContext, named(type, name));
     }
 
+    //TODO: check naming Authentication vs Authorization
+    static RequestParameter<Option<Authentication>> inAuthHeader(final AuthType type) {
+        return assembly(RequestContext::headerContext, named(Authentication.class, type.headerName()));
+    }
+
     static <T> RequestParameter<Option<T>> inHeader(final TypeToken<T> type, final String name) {
         return assembly(RequestContext::headerContext, named(type, name));
     }
